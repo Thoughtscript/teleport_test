@@ -7,6 +7,7 @@ import (
 	"github.com/gofrs/uuid"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -20,18 +21,41 @@ func main() {
 	http.HandleFunc("/api/create", h.CreateJob)
 	http.HandleFunc("/api/job", h.QueryJob)
 	http.HandleFunc("/api/pool", h.QueryPool)
+	http.HandleFunc("/api/stop", h.StopJob)
 
 	// TLS
 	port := ":8888"
 	http.ListenAndServeTLS(port, "cert.crt", "key.key", nil)
 	log.Println("Listening on port", port)
 
-	Test()
-	//m.ProcessQueue()
+	handleQueue()
 }
 
-// Tests
-func Test() {
+// ----------------------------
+// Queue
+// ----------------------------
+
+func handleQueue() {
+	wg := new(sync.WaitGroup)
+
+	wg.Add(1)
+	go m.ProcessQueue(wg)
+
+	wg.Add(1)
+	go Test1(wg)
+	wg.Add(1)
+	go Test2(wg)
+
+	wg.Wait()
+}
+
+// ----------------------------
+// Debugging and tests
+// ----------------------------
+
+func Test1(wg *sync.WaitGroup) {
+	defer wg.Done()
+
 	uuid1 := uuid.Must(uuid.NewV4()).String()
 	worker1 := m.WorkerModel{
 		Uuid:    uuid1,
@@ -61,4 +85,39 @@ func Test() {
 	worker2.ExecuteCommand()
 	fmt.Println(m.GetAllJobs())
 	fmt.Println(m.GetWorkerPool().Workers)
+
+	uuid3 := uuid.Must(uuid.NewV4()).String()
+	worker3 := m.WorkerModel{
+		Uuid:    uuid3,
+		Time:    time.Now(),
+		Status:  "queued",
+		Command: "ls",
+	}
+	m.AddWorker(worker3)
+	fmt.Println(uuid3, m.GetJob(uuid3))
+	fmt.Println(m.GetWorkerPool().Workers)
+	fmt.Println(m.GetWorkerPool().Statuses)
+	m.StopWorker(uuid3)
+	fmt.Println(m.GetAllJobs())
+	fmt.Println(m.GetWorkerPool().Workers)
+}
+
+func Test2(wg *sync.WaitGroup) {
+	defer wg.Done()
+	for {
+		var second time.Duration = 1000000000
+		var seconds time.Duration = 5
+		time.Sleep(seconds * second)
+
+		uuid := uuid.Must(uuid.NewV4()).String()
+		fmt.Println("Adding worker", uuid)
+
+		worker := m.WorkerModel{
+			Uuid:    uuid,
+			Time:    time.Now(),
+			Status:  "queued",
+			Command: "ls",
+		}
+		m.AddWorker(worker)
+	}
 }
