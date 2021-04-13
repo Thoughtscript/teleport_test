@@ -19,6 +19,8 @@ forward for the Developer Relations role.
 Despite that, I'd also like to complete at least one of the product engineering challenges to help substantiate my
 application and ensure I'm in line with the team.
 
+------
+
 *Backend Engineer* - Level 1:
 
 To be implemented in several stages per
