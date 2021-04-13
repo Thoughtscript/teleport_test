@@ -32,19 +32,33 @@ func main() {
 
 // Tests
 func Test() {
-	uuid := uuid.Must(uuid.NewV4()).String()
-	worker := m.WorkerModel{
-		Uuid:    uuid,
+	uuid1 := uuid.Must(uuid.NewV4()).String()
+	worker1 := m.WorkerModel{
+		Uuid:    uuid1,
 		Time:    time.Now(),
 		Status:  "queued",
 		Command: "ls",
 	}
-	m.AddWorker(worker)
-
-	fmt.Println(uuid, m.GetJob(uuid))
-
+	m.AddWorker(worker1)
+	fmt.Println(uuid1, m.GetJob(uuid1))
 	fmt.Println(m.GetWorkerPool().Workers)
 	fmt.Println(m.GetWorkerPool().Statuses)
+	worker1.ExecuteCommand()
+	fmt.Println(m.GetAllJobs())
+	fmt.Println(m.GetWorkerPool().Workers)
 
-	worker.ExecuteCommand()
+	uuid2 := uuid.Must(uuid.NewV4()).String()
+	worker2 := m.WorkerModel{
+		Uuid:    uuid2,
+		Time:    time.Now(),
+		Status:  "queued",
+		Command: "ls",
+	}
+	m.AddWorker(worker2)
+	fmt.Println(uuid1, m.GetJob(uuid1))
+	fmt.Println(m.GetWorkerPool().Workers)
+	fmt.Println(m.GetWorkerPool().Statuses)
+	worker2.ExecuteCommand()
+	fmt.Println(m.GetAllJobs())
+	fmt.Println(m.GetWorkerPool().Workers)
 }
