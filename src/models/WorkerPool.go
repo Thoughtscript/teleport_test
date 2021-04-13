@@ -30,11 +30,7 @@ func GetWorkerPool() *WorkerPool {
 			fmt.Println("Creating singleton Worker Pool!")
 			workerPool = &WorkerPool{}
 			workerPool.Statuses = make(map[string]string)
-		} else {
-			fmt.Println("Worker Pool already creating - getting instance!")
 		}
-	} else {
-		fmt.Println("Worker Pool already creating - getting instance!")
 	}
 	return workerPool
 }
@@ -50,6 +46,11 @@ func AddWorker(worker WorkerModel) {
 
 func ProcessQueue() {
 	for {
+		var second time.Duration = 1000000000
+		var seconds time.Duration =  5
+
+		time.Sleep(seconds*second)
+		fmt.Println("Polling: ", seconds*second)
 		c := time.Now()
 		w := GetWorkerPool().Workers
 		for i := 0; i < len(w); i++ {
