@@ -46,8 +46,19 @@ Execute the following commands:
 
 1. `go get github.com/gofrs/uuid`
 
+For a valid self-signed SSL:
+
+1. `openssl genrsa -out key.pem 2048`
+1. `openssl req -new -sha256 -key key.pem -out csr.csr`
+1. `openssl req -x509 -sha256 -days 365 -key key.pem -in csr.csr -out certificate.pem`
+1. `openssl req -in csr.csr -text -noout | grep -i "Signature.*SHA256" && echo "All is well" || echo "This certificate will stop working in 2017! You must update OpenSSL to generate a widely-compatible certificate"`
+1. `openssl x509 -outform der -in yourPemFilename.pem -out certfileOutName.crt`
+1. `openssl rsa -in yourPemFilename.pem -out keyfileOutName.key`
+
 ## Resources
 
 1. https://golang.org/pkg/
-2. https://golangbyexample.com/singleton-design-pattern-go/
-3. https://github.com/Thoughtscript/teleport_test
+1. https://golangbyexample.com/singleton-design-pattern-go/
+1. https://github.com/Thoughtscript/teleport_test
+1. https://msol.io/blog/tech/create-a-self-signed-ssl-certificate-with-openssl/
+1. https://stackoverflow.com/questions/13732826/convert-pem-to-crt-and-key
