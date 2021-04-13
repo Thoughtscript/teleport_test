@@ -15,7 +15,8 @@ func main() {
 
 	// API endpoints
 	http.HandleFunc("/api/create", h.CreateJob)
-	http.HandleFunc("/api/query", h.QueryJob)
+	http.HandleFunc("/api/job", h.QueryJob)
+	http.HandleFunc("/api/pool", h.QueryPool)
 
 	// TLS
 	port := ":8888"

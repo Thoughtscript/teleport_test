@@ -14,6 +14,7 @@ type WorkerPool struct {
 // ----------------------------
 // Singleton Pool
 // ----------------------------
+// https://golangbyexample.com/singleton-design-pattern-go/
 
 // Define one mutex
 var lock = &sync.Mutex{}
