@@ -1,20 +1,28 @@
 # teleport_test
 
-Contents of this repo include an optional GoLang code challenge submitted after receiving an initial offer for a Technical Writing and Developer Advocate (Developer Relations) job.
+[![](https://img.shields.io/badge/Go-1.14.1-blue.svg)](https://golang.org/pkg/)
+
+Contents of this repo include an optional GoLang code challenge submitted after receiving an initial offer for a
+Technical Writing and Developer Advocate (Developer Relations) job.
 
 I felt it was important to help substantiate my ability to work in the stack.
 
 ## Job Role
 
-So, a tentative offer was made at Developer Relations IV which I turned down (since I felt it was outside my range of experience). I  was also surprised at the generosity of the offer (it's competitive and appears to be in line with both the average and median at multiple firms). They insisted on Developer Relations II!
+So, a tentative offer was made at Developer Relations IV which I turned down (since I felt it was outside my range of
+experience). I was also surprised at the generosity of the offer (it's competitive and appears to be in line with both
+the average and median at multiple firms). They insisted on Developer Relations II!
 
-Per our previous conversation, the CTO felt that my previous work, articles, and certificates was sufficient to advance forward for the Developer Relations role.
+Per our previous conversation, the CTO felt that my previous work, articles, and certificates was sufficient to advance
+forward for the Developer Relations role.
 
-Despite that, I'd also like to complete at least one of the product engineering challenges to help substantiate my application and ensure I'm in line with the team.
+Despite that, I'd also like to complete at least one of the product engineering challenges to help substantiate my
+application and ensure I'm in line with the team.
 
 *Backend Engineer* - Level 1:
 
-To be implemented in several stages per the [requirements doc](https://github.com/gravitational/careers/blob/main/challenges/systems/worker.pdf).
+To be implemented in several stages per
+the [requirements doc](https://github.com/gravitational/careers/blob/main/challenges/systems/worker.pdf).
 
 ### Level 1
 
@@ -31,3 +39,15 @@ Add HTTPS API to start/stop/get status of a running process. Use basic authentic
 Client command should be able to connect to worker service and schedule several jobs.
 
 Client should be able to query result of the job execution and fetch the logs.
+
+## Running
+
+Execute the following commands:
+
+1. `go get github.com/gofrs/uuid`
+
+## Resources
+
+1. https://golang.org/pkg/
+2. https://golangbyexample.com/singleton-design-pattern-go/
+3. https://github.com/Thoughtscript/teleport_test

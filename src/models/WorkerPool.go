@@ -1,5 +1,68 @@
 package models
 
+import (
+	"fmt"
+	"sync"
+	"time"
+)
+
 type WorkerPool struct {
-	Workers []WorkerModel
+	Workers  []WorkerModel
+	Statuses map[string]string
+}
+
+// ----------------------------
+// Singleton Pool
+// ----------------------------
+
+// Define one mutex
+var lock = &sync.Mutex{}
+
+// Define one top-level variable
+var workerPool *WorkerPool
+
+func GetWorkerPool() *WorkerPool {
+	if workerPool == nil {
+		lock.Lock()
+		defer lock.Unlock()
+		if workerPool == nil {
+			fmt.Println("Creating singleton Worker Pool!")
+			workerPool = &WorkerPool{}
+			workerPool.Statuses = make(map[string]string)
+		} else {
+			fmt.Println("Worker Pool already creating - getting instance!")
+		}
+	} else {
+		fmt.Println("Worker Pool already creating - getting instance!")
+	}
+	return workerPool
+}
+
+// ----------------------------
+// Helpers
+// ----------------------------
+
+func AddWorker(worker WorkerModel) {
+	GetWorkerPool().Workers = append(GetWorkerPool().Workers, worker)
+	GetWorkerPool().Statuses[worker.Uuid] = worker.Status
+}
+
+func ProcessQueue() {
+	for {
+		c := time.Now()
+		w := GetWorkerPool().Workers
+		for i := 0; i < len(w); i++ {
+			t := w[i].Time
+			r := t.Equal(c) || t.After(c)
+
+			// Execute only if hasn't run yet
+			if r && w[i].Status == "queued" {
+				w[i].ExecuteCommand()
+			}
+		}
+	}
+}
+
+func GetJob(uuid string) string {
+	return GetWorkerPool().Statuses[uuid]
 }

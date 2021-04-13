@@ -9,14 +9,16 @@ import (
 )
 
 type WorkerModel struct {
-	Id   string
-	Time time.Time
-	Status string
+	Uuid    string
+	Time    time.Time
+	Status  string
 	Command string
 }
 
-func (w WorkerModel) execute () {
+// Receiver-type function
+func (w WorkerModel) ExecuteCommand() {
 	w.Status = "Executing"
+	GetWorkerPool().Statuses[w.Uuid] = w.Status
 	fmt.Printf(w.Command)
 
 	cmd := exec.Command("ls")
@@ -27,10 +29,11 @@ func (w WorkerModel) execute () {
 	err := cmd.Run()
 	if err != nil {
 		w.Status = "Failed"
+		GetWorkerPool().Statuses[w.Uuid] = w.Status
 		log.Fatal(err)
 	}
 
 	w.Status = "Completed"
+	GetWorkerPool().Statuses[w.Uuid] = w.Status
 	fmt.Printf(out.String())
 }
-

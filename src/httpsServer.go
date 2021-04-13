@@ -2,6 +2,7 @@ package main
 
 import (
 	h "./handlers"
+	m "./models"
 	"log"
 	"net/http"
 )
@@ -20,4 +21,6 @@ func main() {
 	port := ":8888"
 	http.ListenAndServeTLS(port, "cert.crt", "key.key", nil)
 	log.Println("Listening on port {{port}} ...")
+
+	m.ProcessQueue()
 }
