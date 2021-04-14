@@ -27,7 +27,11 @@ func CreateJob(w http.ResponseWriter, r *http.Request) {
 		m.AddWorker(worker)
 
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(worker)
+
+		err = json.NewEncoder(w).Encode(worker)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		}
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
@@ -38,7 +42,10 @@ func QueryPool(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(m.GetWorkerPool())
+		err := json.NewEncoder(w).Encode(m.GetWorkerPool())
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		}
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
@@ -48,9 +55,12 @@ func QueryJob(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodGet {
-		uuid := r.Header.Get("uuid")
+		uud := r.Header.Get("uuid")
 		w.WriteHeader(http.StatusOK)
-		json.NewEncoder(w).Encode(m.GetJob(uuid))
+		err := json.NewEncoder(w).Encode(m.GetJob(uud))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		}
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
@@ -60,10 +70,13 @@ func StopJob(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodGet {
-		uuid := r.Header.Get("uuid")
+		uud := r.Header.Get("uuid")
 		w.WriteHeader(http.StatusOK)
-		m.StopWorker(uuid)
-		json.NewEncoder(w).Encode(m.GetJob(uuid))
+		m.StopWorker(uud)
+		err := json.NewEncoder(w).Encode(m.GetJob(uud))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+		}
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}

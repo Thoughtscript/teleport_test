@@ -25,7 +25,11 @@ func main() {
 
 	// TLS
 	port := ":8888"
-	http.ListenAndServeTLS(port, "cert.crt", "key.key", nil)
+	//err := http.ListenAndServe(":8888", nil)
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//http.ListenAndServeTLS(port, "cert.pem", "key.pem", nil)
 	log.Println("Listening on port", port)
 
 	handleQueue()
@@ -109,11 +113,11 @@ func Test2(wg *sync.WaitGroup) {
 		var seconds time.Duration = 5
 		time.Sleep(seconds * second)
 
-		uuid := uuid.Must(uuid.NewV4()).String()
-		fmt.Println("Adding worker", uuid)
+		uud := uuid.Must(uuid.NewV4()).String()
+		fmt.Println("Adding worker", uud)
 
 		worker := m.WorkerModel{
-			Uuid:    uuid,
+			Uuid:    uud,
 			Time:    time.Now(),
 			Status:  "queued",
 			Command: "ls",

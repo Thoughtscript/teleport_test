@@ -27,8 +27,6 @@ var workerPool *WorkerPool
 
 func GetWorkerPool() *WorkerPool {
 	if workerPool == nil {
-		lock.Lock()
-		defer lock.Unlock()
 		if workerPool == nil {
 			fmt.Println("Creating singleton Worker Pool!")
 			workerPool = &WorkerPool{}
@@ -44,10 +42,14 @@ func GetWorkerPool() *WorkerPool {
 // Worker-Specific Helpers
 // ----------------------------
 
-// Receiver-type function
+// ExecuteCommand Receiver-type function
 func (w WorkerModel) ExecuteCommand() {
 	w.Status = "executing"
+
+	lock.Lock()
 	GetWorkerPool().Statuses[w.Uuid] = w.Status
+	lock.Unlock()
+
 	fmt.Println(w.Uuid, w.Status, w.Command)
 	outputChannel := make(chan string)
 
@@ -63,13 +65,23 @@ func (w WorkerModel) ExecuteCommand() {
 		err := cmd.Run()
 		if err != nil {
 			w.Status = "failed"
+			w.Output = "failed"
+
+			lock.Lock()
 			GetWorkerPool().Statuses[w.Uuid] = w.Status
+			lock.Unlock()
+
 			outputChannel <- w.Uuid + " " + w.Status + " " + w.Command
 			RemoveWorker(w.Uuid)
 		}
 
 		w.Status = "completed"
+		w.Output = out.String()
+
+		lock.Lock()
 		GetWorkerPool().Statuses[w.Uuid] = w.Status
+		lock.Unlock()
+
 		outputChannel <- w.Uuid + " " + w.Status + " " + w.Command + " " + out.String()
 		RemoveWorker(w.Uuid)
 	}()
@@ -83,19 +95,35 @@ func (w WorkerModel) ExecuteCommand() {
 // ----------------------------
 
 func AddWorker(worker WorkerModel) {
+	lock.Lock()
 	GetWorkerPool().Queue[worker.Uuid] = worker.Time
+	lock.Unlock()
+
+	lock.Lock()
 	GetWorkerPool().Workers[worker.Uuid] = worker
+	lock.Unlock()
+
+	lock.Lock()
 	GetWorkerPool().Statuses[worker.Uuid] = worker.Status
+	lock.Unlock()
 }
 
 func RemoveWorker(uuid string) {
+	lock.Lock()
 	delete(GetWorkerPool().Workers, uuid)
+	lock.Unlock()
+
+	lock.Lock()
 	delete(GetWorkerPool().Queue, uuid)
+	lock.Unlock()
 }
 
 func StopWorker(uuid string) {
 	RemoveWorker(uuid)
+
+	lock.Lock()
 	GetWorkerPool().Statuses[uuid] = "stopped"
+	lock.Unlock()
 }
 
 func ProcessQueue(wg *sync.WaitGroup) {
@@ -107,32 +135,52 @@ func ProcessQueue(wg *sync.WaitGroup) {
 
 		time.Sleep(seconds * second)
 		fmt.Println("Polling: ", seconds*second)
-		c := time.Now()
+		//c := time.Now()
 
-		for k, v := range GetWorkerPool().Queue {
-			r := v.Equal(c) || v.After(c)
+		//for k, v := range GetWorkerPool().Queue {
+		//	r := v.Equal(c) || v.After(c)
 
 			// Execute only if hasn't run yet
-			// Workers can have queued, executing, failed, completed
-			// The latter two will be removed from queue and kept in status map
-			w := GetWorkerPool().Workers[k]
-			if r && w.Status == "queued" {
-				w.ExecuteCommand()
-			}
-		}
+			// Workers can have queued, executing, stopped, failed, completed
+			// The latter three will be removed from queue and kept in status map
+		//	w := GetWorkerPool().Workers[k]
+		//	if r && w.Status == "queued" {
+		//		w.ExecuteCommand()
+		//	}
+		//}
 
+		lock.Lock()
 		fmt.Println(GetWorkerPool().Queue)
+		lock.Unlock()
+
+		lock.Lock()
 		fmt.Println(GetWorkerPool().Workers)
+		lock.Unlock()
+
+		lock.Lock()
 		fmt.Println(GetWorkerPool().Statuses)
+		lock.Unlock()
 	}
 }
 
-// Query to get status/history of worker
+// GetJob Query to get status/history of worker
 func GetJob(uuid string) string {
-	return GetWorkerPool().Statuses[uuid]
+	w := WorkerModel{}
+
+	lock.Lock()
+	w = GetWorkerPool().Workers[uuid]
+	lock.Unlock()
+
+	return w.Status + " " + w.Output
 }
 
-// Query to get all worker histories
+// GetAllJobs Query to get all worker histories
 func GetAllJobs() map[string]string {
-	return GetWorkerPool().Statuses
+	w := map[string]string{}
+
+	lock.Lock()
+	w = GetWorkerPool().Statuses
+	lock.Unlock()
+
+	return w
 }

@@ -9,4 +9,5 @@ type WorkerModel struct {
 	Time    time.Time
 	Status  string
 	Command string
+	Output  string
 }
