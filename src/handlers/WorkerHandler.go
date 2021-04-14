@@ -27,7 +27,6 @@ func CreateJob(w http.ResponseWriter, r *http.Request) {
 		m.AddWorker(worker)
 
 		w.WriteHeader(http.StatusCreated)
-
 		err = json.NewEncoder(w).Encode(worker)
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)

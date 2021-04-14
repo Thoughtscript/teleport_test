@@ -45,8 +45,8 @@ func handleQueue() {
 	wg.Add(1)
 	go m.ProcessQueue(wg)
 
-	wg.Add(1)
-	go Test1(wg)
+	//wg.Add(1)
+	//go Test1(wg)
 	wg.Add(1)
 	go Test2(wg)
 

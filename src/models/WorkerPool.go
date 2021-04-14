@@ -135,31 +135,40 @@ func ProcessQueue(wg *sync.WaitGroup) {
 
 		time.Sleep(seconds * second)
 		fmt.Println("Polling: ", seconds*second)
-		//c := time.Now()
+		c := time.Now()
 
-		//for k, v := range GetWorkerPool().Queue {
-		//	r := v.Equal(c) || v.After(c)
+		lock.Lock()
+		wks := GetWorkerPool().Queue
+		lock.Unlock()
+
+		fmt.Println(wks)
+
+		for k, v := range wks {
+			r := v.Equal(c) || v.After(c)
 
 			// Execute only if hasn't run yet
 			// Workers can have queued, executing, stopped, failed, completed
 			// The latter three will be removed from queue and kept in status map
-		//	w := GetWorkerPool().Workers[k]
-		//	if r && w.Status == "queued" {
-		//		w.ExecuteCommand()
-		//	}
-		//}
+			lock.Lock()
+			w := GetWorkerPool().Workers[k]
+			lock.Unlock()
 
-		lock.Lock()
-		fmt.Println(GetWorkerPool().Queue)
-		lock.Unlock()
+			if r && w.Status == "queued" {
+				w.ExecuteCommand()
+			}
+		}
 
-		lock.Lock()
-		fmt.Println(GetWorkerPool().Workers)
-		lock.Unlock()
+		//lock.Lock()
+		//fmt.Println(GetWorkerPool().Queue)
+		//lock.Unlock()
 
-		lock.Lock()
-		fmt.Println(GetWorkerPool().Statuses)
-		lock.Unlock()
+		//lock.Lock()
+		//fmt.Println(GetWorkerPool().Workers)
+		//lock.Unlock()
+
+		//lock.Lock()
+		//fmt.Println(GetWorkerPool().Statuses)
+		//lock.Unlock()
 	}
 }
 
