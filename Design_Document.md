@@ -21,6 +21,15 @@ Advantages of this approach:
 1. By dividing the "Worker Queue" into multiple parts, I can reduce I/O and reads on the same objects. For many operations I only need to see a **Worker's** status. For others, I only need to see the **Worker's** schedule time.
 1. Read, delete, update, and insert operations are performed in approximately O(1) time.
 
+Disadvantages of this approach:
+
+1. May not be the best way to represent, or most efficiently hold and process **Workers**.
+1. Tables can grow to enormous sizes over time. No hard limit is currently implemented. 
+1. No worker retries.
+1. No support for complex task operations - no IPC equivalent (inter-process communication). Jobs cannot be executed depending on the success or failure of other jobs.
+1. Timestamp localization has not been implemented. On the one hand, the API is not envisioned as a global, public-facing, API. On the other hand, the possibility of submitting jobs across multiple timezones still exists as a live-possibility for any likely real-world scenario.
+1. Hard-coded bash commands and no cmd-injection or safe-string protection implemented. This would likely be at least partly handled by explicitly specifying user inputs as an **Enum** to prevent unintended commands from being run on the server.
+
 Comparison with other approaches:
 
 1. I don't use buffered channels here since jobs need to be persisted (in memory) and scheduled to be run in the future.
