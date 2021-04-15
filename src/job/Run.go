@@ -19,7 +19,7 @@ func ProcessQueue(wg *sync.WaitGroup) {
 		var seconds time.Duration = 5
 
 		time.Sleep(seconds * second)
-		fmt.Println("====================================")
+		fmt.Println("=================== POLLING ===================")
 		fmt.Println("Polling every:", seconds*second)
 		c := time.Now()
 
@@ -38,6 +38,8 @@ func ProcessQueue(wg *sync.WaitGroup) {
 		}
 
 		fmt.Println(m.StatusTable())
+		fmt.Println(m.WorkerTable())
+		fmt.Println(m.WorkerQueue())
 	}
 }
 

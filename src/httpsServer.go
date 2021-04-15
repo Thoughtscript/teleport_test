@@ -21,12 +21,12 @@ func main() {
 
 	// TLS
 	port := ":8888"
-	//err := http.ListenAndServe(port, nil)
+	log.Println("Listening on port", port)
+
+	//err := http.ListenAndServeTLS(port, "cert.pem", "key.pem", nil)
 	//if err != nil {
 	//	log.Fatal(err)
 	//}
-	//http.ListenAndServeTLS(port, "cert.pem", "key.pem", nil)
-	log.Println("Listening on port", port)
 
 	//j.JobLoop()
 	t.TestLoop()

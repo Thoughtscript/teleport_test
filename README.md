@@ -11,7 +11,9 @@ I felt it was important to help substantiate my ability to work in the stack.
 
 So, a tentative offer was made at Developer Relations IV which I turned down (since I felt it was outside my range of
 experience). I was also surprised at the generosity of the offer (it's competitive and appears to be in line with both
-the average and median at multiple firms). They insisted on Developer Relations II!
+the average and median at multiple firms). 
+
+They insisted on Developer Relations II! Hooray! I accepted!
 
 Per our previous conversation, the CTO felt that my previous work, articles, and certificates was sufficient to advance
 forward for the Developer Relations role.

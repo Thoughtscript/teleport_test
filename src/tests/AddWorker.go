@@ -37,6 +37,28 @@ func TestExecuteWorkerLoop(wg *sync.WaitGroup) {
 	}
 }
 
+func AddWorkerAndStop(wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	uid := uuid.Must(uuid.NewV4()).String()
+	fmt.Println("Adding worker:", uid)
+
+	worker := m.WorkerModel{
+		Uuid:    uid,
+		Time:    time.Now(),
+		Status:  "queued",
+		Command: "ls",
+	}
+
+	j.AddWorker(worker)
+
+	fmt.Println(m.StatusTable()[uid])
+	fmt.Println(m.WorkerTable()[uid])
+	fmt.Println(m.WorkerQueue()[uid])
+
+	j.StopWorker(uid)
+}
+
 func AddWorkerAndExecuteWg(wg *sync.WaitGroup) {
 	defer wg.Done()
 
