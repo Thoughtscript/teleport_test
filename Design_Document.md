@@ -1,6 +1,6 @@
 # Design Document
 
-This document summarizes my approach to the Teleport Level 1 Product Engineer challenge (per requirements).
+This document summarizes my approach to the Teleport Level One Backend Engineer challenge (per [requirements](https://github.com/gravitational/careers/blob/main/challenges/systems/worker.pdf)).
 
 ## Worker Library
 
