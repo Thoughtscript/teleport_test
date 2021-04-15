@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	j "../job"
 	m "../models"
 	"encoding/json"
 	"github.com/gofrs/uuid"
@@ -9,6 +10,7 @@ import (
 	"time"
 )
 
+// CreateJob - POST - create a worker and it to the queue
 func CreateJob(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -24,7 +26,7 @@ func CreateJob(w http.ResponseWriter, r *http.Request) {
 			Status:  "queued",
 			Command: r.Header.Get("cmd"),
 		}
-		m.AddWorker(worker)
+		j.AddWorker(worker)
 
 		w.WriteHeader(http.StatusCreated)
 		err = json.NewEncoder(w).Encode(worker)
@@ -41,7 +43,7 @@ func QueryPool(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == http.MethodGet {
 		w.WriteHeader(http.StatusOK)
-		err := json.NewEncoder(w).Encode(m.GetWorkerPool())
+		err := json.NewEncoder(w).Encode(j.GetAllJobs())
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 		}
@@ -54,9 +56,9 @@ func QueryJob(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodGet {
-		uud := r.Header.Get("uuid")
+		uid := r.Header.Get("uuid")
 		w.WriteHeader(http.StatusOK)
-		err := json.NewEncoder(w).Encode(m.GetJob(uud))
+		err := json.NewEncoder(w).Encode(j.GetJob(uid))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 		}
@@ -69,10 +71,10 @@ func StopJob(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodGet {
-		uud := r.Header.Get("uuid")
+		uid := r.Header.Get("uuid")
 		w.WriteHeader(http.StatusOK)
-		m.StopWorker(uud)
-		err := json.NewEncoder(w).Encode(m.GetJob(uud))
+		j.StopWorker(uid)
+		err := json.NewEncoder(w).Encode(j.GetJob(uid))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 		}
