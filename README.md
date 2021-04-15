@@ -21,24 +21,22 @@ forward for the Developer Relations role.
 Despite that, I'd also like to complete at least one of the product engineering challenges to help substantiate my
 application and ensure I'm in line with the team.
 
-------
-
-*Backend Engineer* - Level 1:
+### Backend Engineer - Level One
 
 To be implemented in several stages per
 the [requirements doc](https://github.com/gravitational/careers/blob/main/challenges/systems/worker.pdf).
 
-### Level 1
+#### Level One
 
-#### Library
+##### Library
 
 Worker library with methods to start/stop/query status and get an output of a running job.
 
-#### API
+##### API
 
 Add HTTPS API to start/stop/get status of a running process. Use basic authentication.
 
-#### Client
+##### Client
 
 Client command should be able to connect to worker service and schedule several jobs.
 
@@ -60,6 +58,10 @@ Navigate to [src](./src):
 
 1. `$ go run httpsServer.go`
 1. http://localhost:8888/public/
+
+## Design Document
+
+Available [here](Design_Document.md).
 
 ## Resources
 
