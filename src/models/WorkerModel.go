@@ -61,4 +61,6 @@ func (worker WorkerModel) log(msg string, outputChannel chan string, stdoutStr s
 func (worker WorkerModel) updateStatus(msg string) {
 	worker.Status = msg
 	UpdateStatusTable(worker.Uuid, msg)
+	// Update worker
+	AddToWorkerTable(worker)
 }

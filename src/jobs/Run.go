@@ -1,4 +1,4 @@
-package job
+package jobs
 
 import (
 	m "../models"
@@ -19,8 +19,7 @@ func ProcessQueue(wg *sync.WaitGroup) {
 		var seconds time.Duration = 5
 
 		time.Sleep(seconds * second)
-		fmt.Println("=================== POLLING ===================")
-		fmt.Println("Polling every:", seconds*second)
+		fmt.Println("=================== POLLING EVERY", seconds*second, "===================")
 		c := time.Now()
 
 		wks := m.WorkerQueue()
@@ -37,9 +36,9 @@ func ProcessQueue(wg *sync.WaitGroup) {
 			}
 		}
 
-		fmt.Println(m.StatusTable())
-		fmt.Println(m.WorkerTable())
-		fmt.Println(m.WorkerQueue())
+		//fmt.Println(m.StatusTable())
+		//fmt.Println(m.WorkerTable())
+		//fmt.Println(m.WorkerQueue())
 	}
 }
 

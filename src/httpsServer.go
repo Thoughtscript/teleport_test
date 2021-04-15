@@ -2,7 +2,7 @@ package main
 
 import (
 	h "./handlers"
-	t "./tests"
+	j "./jobs"
 	"log"
 	"net/http"
 )
@@ -15,19 +15,15 @@ func main() {
 
 	// API endpoints
 	http.HandleFunc("/api/create", h.CreateJob)
-	http.HandleFunc("/api/job", h.QueryJob)
+	http.HandleFunc("/api/jobs", h.QueryJob)
 	http.HandleFunc("/api/pool", h.QueryPool)
 	http.HandleFunc("/api/stop", h.StopJob)
 
+	go j.JobLoop()
+	//go t.TestLoop()
+
 	// TLS
-	port := ":8888"
+	port := ":443"
 	log.Println("Listening on port", port)
-
-	//err := http.ListenAndServeTLS(port, "cert.pem", "key.pem", nil)
-	//if err != nil {
-	//	log.Fatal(err)
-	//}
-
-	//j.JobLoop()
-	t.TestLoop()
+	go log.Fatal(http.ListenAndServeTLS(port, "cert.pem", "key.pem", nil))
 }

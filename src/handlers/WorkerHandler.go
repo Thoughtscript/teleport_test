@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	j "../job"
+	j "../jobs"
 	m "../models"
 	"encoding/json"
 	"github.com/gofrs/uuid"
@@ -15,9 +15,9 @@ func CreateJob(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	if r.Method == http.MethodPost {
-		scheduled, err := time.Parse(time.UnixDate, r.Header.Get("scheduled"))
+		scheduled, err := time.Parse(time.RFC3339, r.Header.Get("scheduled"))
 		if err != nil {
-			log.Fatal("Exception encountered - please supply a valid scheduled time!")
+			log.Println("Exception encountered - please supply a valid scheduled time!")
 		}
 
 		worker := m.WorkerModel{
@@ -70,11 +70,11 @@ func QueryJob(w http.ResponseWriter, r *http.Request) {
 func StopJob(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
-	if r.Method == http.MethodGet {
+	if r.Method == http.MethodPost {
 		uid := r.Header.Get("uuid")
 		w.WriteHeader(http.StatusOK)
 		j.StopWorker(uid)
-		err := json.NewEncoder(w).Encode(j.GetJob(uid))
+		err := json.NewEncoder(w).Encode(j.GetStatus(uid))
 		if err != nil {
 			w.WriteHeader(http.StatusBadRequest)
 		}

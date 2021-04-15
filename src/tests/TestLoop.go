@@ -1,7 +1,7 @@
 package tests
 
 import (
-	j "../job"
+	j "../jobs"
 	"fmt"
 	"sync"
 	"time"

@@ -10,9 +10,9 @@ In order to avoid concurrency concerns (concurrent iteration, reading, and writi
 1. [Worker Table](src/models/WorkerTable.go) - lookup table for actual **Worker** objects implemented as a `map[string]WorkerModel` (`uuid` -> `worker object`).
 1. [Status Table](src/models/StatusTable.go) - lookup table for the status of any previous or extant **Worker**  implemented as a `map[string]string` (`uuid` -> `worker status`).
 
-The **Worker Queue** object is processed via the [Job Loop](src/job/JobLoop.go) which polls the **Worker Queue** every 5 seconds in [ProcessQueue()](src/job/Run.go). A simple **Time** comparison is performed to verify whether a task should be executed or not.
+The **Worker Queue** object is processed via the [Job Loop](src/jobs/JobLoop.go) which polls the **Worker Queue** every 5 seconds in [ProcessQueue()](src/jobs/Run.go). A simple **Time** comparison is performed to verify whether a task should be executed or not.
 
-Advantages of this approach:
+### Advantages of this approach
 
 1. The "Worker Queue" need not be a **Stack**, **Linked List**, **Dequeue**, or actual **Queue** since the order of arrival doesn't matter. (This is why I put "Worker Queue" in quotes.)
 1. I can define a unique **Mutex** by dividing the Worker Queue into several individual, singleton, units. If these were combined into a single object (say one with three **Maps**) that shared a single **Mutex**, concurrency issues would likely arise.
@@ -21,7 +21,7 @@ Advantages of this approach:
 1. By dividing the "Worker Queue" into multiple parts, I can reduce I/O and reads on the same objects. For many operations I only need to see a **Worker's** status. For others, I only need to see the **Worker's** schedule time.
 1. Read, delete, update, and insert operations are performed in approximately O(1) time.
 
-Disadvantages of this approach:
+### Disadvantages of this approach
 
 1. May not be the best way to represent, or most efficiently hold and process **Workers**.
 1. Tables can grow to enormous sizes over time. No hard limit is currently implemented. 
@@ -30,12 +30,12 @@ Disadvantages of this approach:
 1. Timestamp localization has not been implemented. On the one hand, the API is not envisioned as a global, public-facing, API. On the other hand, the possibility of submitting jobs across multiple timezones still exists as a live-possibility for any likely real-world scenario.
 1. Hard-coded bash commands and no cmd-injection or safe-string protection implemented. This would likely be at least partly handled by explicitly specifying user inputs as an **Enum** to prevent unintended commands from being run on the server.
 
-Comparison with other approaches:
+### Comparison with other approaches
 
 1. I don't use buffered channels here since jobs need to be persisted (in memory) and scheduled to be run in the future.
 1. There isn't a need to use buffered channels here except when the **Worker** task is actually executed.
 
-Worker:
+### Worker
 
 1. A [worker](src/models/WorkerModel.go) is defined as an uuid, scheduled time, bash command to be executed at that time, status, and an output capturing the result of an executed task.
 1. I've hardcoded this to always be `ls` since the requirement doc doesn't specify that commands must be unique. In a real-world scenario, a list of commands would likely be specified as an **Enum** with some underlying Bash commands executed within a select, case, or switch statement. To mimic lengthier processes, a timeout of 3 seconds is enforced within each task.
@@ -45,7 +45,7 @@ Worker:
 
 [Worker](src/models/WorkerModel.go) receiver functions provide execute task support. 
 
-Adding and stopping operations involve modifying several tables and have been abstracted to job-specific [helpers](./src/job/Jobs.go).
+Adding and stopping operations involve modifying several tables and have been abstracted to job-specific [helpers](src/jobs/Job.go).
 
 ## TLS API
 

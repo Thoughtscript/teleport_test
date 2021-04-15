@@ -1,7 +1,7 @@
 package tests
 
 import (
-	j "../job"
+	j "../jobs"
 	m "../models"
 	"fmt"
 	"github.com/gofrs/uuid"
