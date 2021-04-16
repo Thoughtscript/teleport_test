@@ -1,8 +1,14 @@
 # Design Document
 
+[![](https://img.shields.io/badge/Go-1.14.1-blue.svg)](https://golang.org/pkg/)
+
 This document summarizes my approach to the Teleport Level One Backend Engineer challenge (per [requirements](https://github.com/gravitational/careers/blob/main/challenges/systems/worker.pdf)).
 
+----
+
 ## Worker Library
+
+![bash](./img/bash.png)
 
 In order to avoid concurrency concerns (concurrent iteration, reading, and writing), I've divided my "Worker Queue" into three parts. Each part is implemented as a **Map**:
 
@@ -29,6 +35,9 @@ The **Worker Queue** object is processed via the [Job Loop](src/jobs/JobLoop.go)
 1. No support for complex task operations - no IPC equivalent (inter-process communication). Jobs cannot be executed depending on the success or failure of other jobs.
 1. Timestamp localization has not been implemented. On the one hand, the API is not envisioned as a global, public-facing, API. On the other hand, the possibility of submitting jobs across multiple timezones still exists as a live-possibility for any likely real-world scenario.
 1. Hard-coded bash commands and no cmd-injection or safe-string protection implemented. This would likely be at least partly handled by explicitly specifying user inputs as an **Enum** to prevent unintended commands from being run on the server.
+1. No dead queue.
+1. No queue topics.
+1. Not a publish-subscribe implementation (follow-up query required).
 
 ### Comparison with other approaches
 
@@ -49,15 +58,17 @@ The **Worker Queue** object is processed via the [Job Loop](src/jobs/JobLoop.go)
 
 Adding and stopping operations involve modifying several tables and have been abstracted to job-specific [helpers](src/jobs/Job.go).
 
+----
+
 ## TLS REST API
 
 The API uses the most basic authentication and supplies endpoints to query the **Worker Status** table, **Workers**, stop **Workers**, and submit **Workers** to the **Worker Queue**.
 
-The API uses a self-signed TLS cert generated through OpenSSL.
+> The default authentication settings are: `User`: `test` and `Password`: `test`.
 
-API HTTP headers are case-insensitive.
+> API HTTP headers are case-insensitive.
 
-The default authentication settings are: `user`: `test` and `password`: `test`.
+> The API uses a self-signed TLS certificate generated through OpenSSL.
 
 ### Endpoints
 
@@ -65,17 +76,27 @@ The default authentication settings are: `user`: `test` and `password`: `test`.
 
    Brings up a simple HTML client.
 
+   ![landingpage](./img/landingpage.png)
+
 1. POST - https://localhost/api/create
 
    With headers:
 
-    1. `cmd` - `string` - bash command - this will be converted to `ls` so anything you pass in here is fine to send.
-    1. `scheduled` - `string` - valid go `time.RFC3339` [parsable string](https://golang.org/pkg/time/#example_Parse): `"2006-01-02T15:04:05Z"`
+    1. `Cmd` - `string` - bash command - this will be converted to `ls` so anything you pass in here is fine to send.
+    1. `Scheduled` - `string` - valid go `time.RFC3339` [parsable string](https://golang.org/pkg/time/#example_Parse): `"2006-01-02T15:04:05Z"`
     1. `Content-Type` - `application/json`
-    1. `user` - `string`
-    1. `password` - `string`
+    1. `User` - `string`
+    1. `Password` - `string`
+
+    ![create](./img/postcreate.png)
 
 1. GET - https://localhost/api/pool
+
+   With headers:
+
+    1. `Content-Type` - `application/json`
+    1. `User` - `string`
+    1. `Password` - `string`
 
    Response:
     ```
@@ -92,14 +113,16 @@ The default authentication settings are: `user`: `test` and `password`: `test`.
     }
     ```
 
+    ![pool](./img/getpool.png)
+
 1. GET - https://localhost/api/jobs
 
    With headers:
 
     1. `Content-Type` - `application/json`
-    1. `uuid` - `string` - uuid of Worker
-    1. `user` - `string`
-    1. `password` - `string`
+    1. `Uuid` - `string` - uuid of **Worker**
+    1. `User` - `string`
+    1. `Password` - `string`
 
    Response:
     ```
@@ -112,14 +135,16 @@ The default authentication settings are: `user`: `test` and `password`: `test`.
     }
     ```
 
+    ![jobs](./img/getjobs.png)
+
 1. POST - https://localhost/api/stop
 
    With headers:
 
     1. `Content-Type` - `application/json`
-    1. `uuid` - `string` - uuid of Worker
-    1. `user` - `string`
-    1. `password` - `string`
+    1. `Uuid` - `string` - uuid of **Worker**
+    1. `User` - `string`
+    1. `Password` - `string`
 
    Response:
    
@@ -128,6 +153,8 @@ The default authentication settings are: `user`: `test` and `password`: `test`.
     ```
 
    This API will return `completed`, `failed`, or `stopped`.
+
+   ![stop](./img/poststop.png)
 
 1. GET - https://localhost/api/status
 
@@ -155,3 +182,26 @@ The default authentication settings are: `user`: `test` and `password`: `test`.
 1. No batching.
 1. No pagination.
 1. No client-side or server-side verification of user-submitted bash. (This is hard-coded to `ls` so no malicious attacks could be here. See comments above.)
+
+----
+
+## Client
+
+Two ways of interacting with the API are provided:
+
+1. Via HTML and XHR - https://localhost/public/
+1. Via Postman
+
+### Advantages
+
+1. Postman allows caching.
+1. UI/UX interface.
+1. Static pages - very lightweight interface.
+
+### Limitations
+
+1. No token caching - not JWT.
+1. No client-side form-validation.
+1. No websocket, SSE, or other streaming connections.
+1. Self-signed certificate may not be compatible with any browser except for Safari.
+1. HTML client is not a SPA.
