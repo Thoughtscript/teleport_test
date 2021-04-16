@@ -103,3 +103,25 @@ func StopJob(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 	}
 }
+
+func QueryStatus(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	if r.Method == http.MethodGet {
+		user := r.Header.Get("user")
+		password := r.Header.Get("password")
+
+		if j.VerifyPassword(user, password) {
+			uid := r.Header.Get("uuid")
+			w.WriteHeader(http.StatusOK)
+			err := json.NewEncoder(w).Encode(j.GetStatus(uid))
+			if err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+			}
+		} else {
+			w.WriteHeader(http.StatusForbidden)
+		}
+	} else {
+		w.WriteHeader(http.StatusMethodNotAllowed)
+	}
+}

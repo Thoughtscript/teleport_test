@@ -36,14 +36,16 @@ func (worker WorkerModel) ExecuteCommand() {
 		var seconds time.Duration = 3
 		time.Sleep(second * seconds)
 
-		err := cmd.Run()
-		if err != nil {
-			msg = "failed"
-		} else {
-			msg = "completed"
+		// Check if worker stopped
+		if worker.Status != "stopped" {
+			err := cmd.Run()
+			if err != nil {
+				msg = "failed"
+			} else {
+				msg = "completed"
+			}
+			worker.log(msg, outputChannel, out.String())
 		}
-
-		worker.log(msg, outputChannel, out.String())
 	}()
 
 	result := <-outputChannel

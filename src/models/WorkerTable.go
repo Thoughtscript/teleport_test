@@ -26,6 +26,7 @@ func DeleteFromWorkerTable(uid string) {
 	delete(workerTable, uid)
 }
 
+// AddToWorkerTable - technically, an upsert
 func AddToWorkerTable(worker WorkerModel) {
 	wtLock.Lock()
 	defer wtLock.Unlock()

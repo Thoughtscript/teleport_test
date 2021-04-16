@@ -63,6 +63,8 @@ Navigate to [src](./src):
 
 The default authentication settings are: `user`: `test` and `password`: `test`.
 
+API HTTP headers are case-insensitive.
+
 1. GET - https://localhost/public/
 
    Brings up a simple HTML client.
@@ -83,14 +85,7 @@ The default authentication settings are: `user`: `test` and `password`: `test`.
     ```
     {
         "10a8952b-d730-447c-b1d8-b15614944246": "queued",
-        "15fa758d-9c8e-4eef-877a-e332675e55fe": "completed",
-        "2866b264-513f-4a68-88d2-d8ee4f294f7f": "completed",
-        "4e7b801c-4fd6-4b4d-87dc-c1ce1481d4af": "completed",
-        "59c904ca-bbbc-4d1b-8831-ce86725d440e": "completed",
-        "86480c6d-2134-4aca-82e4-7854e3041ab1": "completed",
-        "b3e8cc19-4a3c-4c83-8b11-26698d1db2a8": "executing",
-        "cbaf1e15-ec3a-4182-b122-b7e235b103c0": "completed",
-        "dff12a72-932b-44eb-80d3-acf4c29b2aeb": "completed"
+        "15fa758d-9c8e-4eef-877a-e332675e55fe": "completed"
     }
     ```
 
@@ -131,7 +126,26 @@ The default authentication settings are: `user`: `test` and `password`: `test`.
 
    This API will return `completed`, `failed`, or `stopped`.
 
-### Examples
+1. GET - https://localhost/api/status
+
+   With headers:
+
+   1. `Content-Type` - `application/json`
+   1. `uuid` - `string` - uuid of Worker
+   1. `user` - `string`
+   1. `password` - `string`
+
+   Response:
+
+    ```
+    "stopped"
+    ```
+
+   This API will return `completed`, `failed`, or `stopped`.
+
+### Console Examples
+
+What you should see server-side:
 
 ```bash
 =================== POLLING EVERY 5s ===================

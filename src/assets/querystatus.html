@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Teleport Challenge Client</title>
+    <link href="styles/style.css" rel="stylesheet" type="text/css">
+    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon">
+  </head>
+  <body>
+
+    <nav>
+      <h1>Teleport Challenge Client</h1>
+    </nav>
+
+    <main>
+      <div>
+        <h4>Query status.</h4>
+      </div>
+
+      <form>
+        <input id="user" placeholder="test" type="text"/>
+        <input id="password" placeholder="test" type="text"/>
+        <input id="uuid" placeholder="1672aaba-cf26-4e78-82de-864259fc3651" type="text"/>
+        <button id="submit">Submit</button>
+      </form>
+
+      <div id="result">
+
+      </div>
+    </main>
+
+    <footer>
+      <ul>
+        <li><a href="index.html" rel="nofollow noopener noreferrer">Home</a></li>
+        <li><a href="api.html" rel="nofollow noopener noreferrer">API Documentation</a></li>
+        <li><a href="addworker.html" rel="nofollow noopener noreferrer">Add a Worker</a></li>
+        <li><a href="stopworker.html" rel="nofollow noopener noreferrer">Stop a Worker</a></li>
+        <li><a href="queryworker.html" rel="nofollow noopener noreferrer">Query Worker</a></li>
+        <li><a href="querystatus.html" rel="nofollow noopener noreferrer">Query Worker Status</a></li>
+        <li><a href="querystatuses.html" rel="nofollow noopener noreferrer">Query All Statuses</a></li>
+      </ul>
+
+      <div>
+        Photo credit of <a href="https://unsplash.com/photos/mkl2p7SOqgw">Tim Zänkert</a>
+      </div>
+    </footer>
+
+    <script>
+      window.onload = function () {
+        const XHR = function (url) {
+          return new Promise(function (resolve, reject) {
+            let xhr = new XMLHttpRequest()
+
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState === 4) {
+                if (xhr.status === 200) return resolve(xhr.response)
+                else return reject("Request failed - please try again!")
+              }
+            }
+
+            xhr.open('GET', url, true)
+            xhr.setRequestHeader('Content-Type', 'application/json')
+            xhr.withCredentials = false
+
+            const user = document.getElementById("user").textContent
+            const password = document.getElementById("password").textContent
+            const uuid = document.getElementById("uuid").textContent
+
+            xhr.setRequestHeader('User', user)
+            xhr.setRequestHeader('Password', password)
+            xhr.setRequestHeader('Uuid', uuid)
+
+            xhr.send()
+          })
+        }
+
+        document.getElementById("submit").onclick(function (e) {
+          XHR("https://localhost/api/status").then(
+              function (success) {
+                const r = document.getElementById("result")
+                const n = document.createTextNode(JSON.stringify(success))
+                r.appendChild(n)
+              },
+              function (failure) {
+                const r = document.getElementById("result")
+                const n = document.createTextNode(JSON.stringify(failure))
+                r.appendChild(n)
+              }
+          )
+
+          e.preventDefault()
+        })
+      }
+    </script>
+  </body>
+</html>

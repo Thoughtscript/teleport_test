@@ -40,16 +40,22 @@ The **Worker Queue** object is processed via the [Job Loop](src/jobs/JobLoop.go)
 1. A [worker](src/models/WorkerModel.go) is defined as an uuid, scheduled time, bash command to be executed at that time, status, and an output capturing the result of an executed task.
 1. I've hardcoded this to always be `ls` since the requirement doc doesn't specify that commands must be unique. In a real-world scenario, a list of commands would likely be specified as an **Enum** with some underlying Bash commands executed within a select, case, or switch statement. To mimic lengthier processes, a timeout of 3 seconds is enforced within each task.
 1. **Worker** are saved into the [Worker Table](src/models/WorkerTable.go) map in-memory. They're removed following a `failed`, `completed`, or `stopped` status update.
-1. The status workflow goes as follows: [`queued`] -> [`executing`] -> [`failed`, `completed`] or [`queued`] ->[`stopped`].
+1. The status workflow goes as follows: 
+   1. [`queued`] -> [`executing`] -> [`failed`, `completed`]
+   1. [`queued`] ->[`stopped`]
 1. When a **Worker** is executed, the bash command is executed within a go routine. Its output is passed to a buffered channel specific to that worker. This is done to allow the contents of a command operation to be loggable and queryable.
 
 [Worker](src/models/WorkerModel.go) receiver functions provide execute task support. 
 
 Adding and stopping operations involve modifying several tables and have been abstracted to job-specific [helpers](src/jobs/Job.go).
 
-## TLS API
+## TLS REST API
 
 The API uses the most basic authentication and supplies endpoints to query the **Worker Status** table, **Workers**, stop **Workers**, and submit **Workers** to the **Worker Queue**.
+
+The API uses a self-signed TLS cert generated through OpenSSL.
+
+API HTTP headers are case-insensitive.
 
 The default authentication settings are: `user`: `test` and `password`: `test`.
 
@@ -117,6 +123,23 @@ The default authentication settings are: `user`: `test` and `password`: `test`.
 
    Response:
    
+    ```
+    "stopped"
+    ```
+
+   This API will return `completed`, `failed`, or `stopped`.
+
+1. GET - https://localhost/api/status
+
+   With headers:
+
+   1. `Content-Type` - `application/json`
+   1. `uuid` - `string` - uuid of Worker
+   1. `user` - `string`
+   1. `password` - `string`
+
+   Response:
+
     ```
     "stopped"
     ```
