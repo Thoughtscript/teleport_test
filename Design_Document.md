@@ -13,10 +13,19 @@ This document summarizes my approach to the Teleport Level One Backend Engineer 
 In order to avoid concurrency concerns (concurrent iteration, reading, and writing), I've divided my "Worker Queue" into three parts. Each part is implemented as a **Map**:
 
 1. [Worker Queue](src/models/WorkerQueue.go) - table used to process **Worker** objects based on scheduled time implemented as a `map[string]time.Time` (`uuid` -> `scheduled time`).
+
+   ![tables](./img/addworker.png)
+
 1. [Worker Table](src/models/WorkerTable.go) - lookup table for actual **Worker** objects implemented as a `map[string]WorkerModel` (`uuid` -> `worker object`).
 1. [Status Table](src/models/StatusTable.go) - lookup table for the status of any previous or extant **Worker**  implemented as a `map[string]string` (`uuid` -> `worker status`).
 
-The **Worker Queue** object is processed via the [Job Loop](src/jobs/JobLoop.go) which polls the **Worker Queue** every 5 seconds in [ProcessQueue()](src/jobs/Run.go). A simple **Time** comparison is performed to verify whether a task should be executed or not.
+The **Worker Queue** object is processed via the [Job Loop](src/jobs/JobLoop.go) which polls the **Worker Queue** every 5 seconds in [ProcessQueue()](src/jobs/Run.go).
+
+![process](./img/processqueue.png)
+
+A simple **Time** comparison is performed to verify whether a task should be executed or not.
+
+![worker](./img/workerexecute.png)
 
 ### Advantages of this approach
 
