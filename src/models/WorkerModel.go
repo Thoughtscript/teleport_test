@@ -52,8 +52,8 @@ func (worker WorkerModel) ExecuteCommand() {
 }
 
 func (worker WorkerModel) log(msg string, outputChannel chan string, stdoutStr string) {
-	worker.updateStatus(msg)
 	worker.Output = stdoutStr
+	worker.updateStatus(msg)
 	outputChannel <- worker.Uuid + " " + worker.Status + " " + worker.Command + " " + stdoutStr
 	DeleteFromWorkerQueue(worker.Uuid)
 }

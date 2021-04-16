@@ -23,13 +23,22 @@ func RemoveWorker(uid string) {
 }
 
 func StopWorker(uid string) {
-	RemoveWorker(uid)
-	m.UpdateStatusTable(uid, "stopped")
-	fmt.Println("Worker stopped:", uid)
+	s := m.ReadFromStatusTable(uid)
+	if s != "" {
+		RemoveWorker(uid)
+		m.UpdateStatusTable(uid, "stopped")
+		fmt.Println("Worker stopped:", uid)
+	}
 }
 
 func GetJob(uid string) m.WorkerModel {
-	return m.ReadFromWorkerTable(uid)
+	w := m.ReadFromWorkerTable(uid)
+	if w.Uuid == "" {
+		w.Uuid = uid
+		w.Status = "not found"
+		w.Output = "not found"
+	}
+	return w
 }
 
 func GetAllJobs() map[string]string {
@@ -37,5 +46,9 @@ func GetAllJobs() map[string]string {
 }
 
 func GetStatus(uid string) string {
-	return m.ReadFromStatusTable(uid)
+	s := m.ReadFromStatusTable(uid)
+	if s == "" {
+		s = "Worker " + uid + " not found!"
+	}
+	return s
 }
