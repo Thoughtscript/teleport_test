@@ -152,4 +152,6 @@ The default authentication settings are: `user`: `test` and `password`: `test`.
 1. Only the very-most basic authentication.
 1. No timeout logic for stale connections.
 1. Only self-signed TLS encryption - no additional encryption of plaintext passwords.
+1. No batching.
+1. No pagination.
 1. No client-side or server-side verification of user-submitted bash. (This is hard-coded to `ls` so no malicious attacks could be here. See comments above.)

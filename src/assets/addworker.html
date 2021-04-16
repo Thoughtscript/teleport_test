@@ -15,6 +15,17 @@
     <main>
       <div>
         <h4>Add worker.</h4>
+      </div>
+
+      <form>
+        <input id="user" placeholder="test" type="text"/>
+        <input id="password" placeholder="test" type="text"/>
+        <input id="scheduled" placeholder="2021-01-02T15:04:05Z" type="text"/>
+        <input id="cmd" placeholder="ls" type="text"/>
+        <button id="submit">Submit</button>
+      </form>
+
+      <div id="result">
 
       </div>
     </main>
@@ -22,7 +33,7 @@
     <footer>
       <ul>
         <li><a href="index.html" rel="nofollow noopener noreferrer">Home</a></li>
-        <li><a href="api.html" rel="nofollow noopener noreferrer">API Documentation</a></li>
+        <li><a href="https://github.com/Thoughtscript/teleport_test/blob/main/Design_Document.md" rel="nofollow noopener noreferrer">API Documentation</a></li>
         <li><a href="addworker.html" rel="nofollow noopener noreferrer">Add a Worker</a></li>
         <li><a href="stopworker.html" rel="nofollow noopener noreferrer">Stop a Worker</a></li>
         <li><a href="queryworker.html" rel="nofollow noopener noreferrer">Query Worker</a></li>
@@ -35,5 +46,61 @@
       </div>
     </footer>
 
+    <script>
+      window.onload = function () {
+
+        const XHR = function (url) {
+          return new Promise(function (resolve, reject) {
+            let xhr = new XMLHttpRequest()
+
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState === 4) {
+                if (xhr.status === 201) return resolve(xhr.response)
+                else return reject("Request failed - please try again!")
+              }
+            }
+
+            xhr.open('POST', url, true)
+            xhr.setRequestHeader('Content-Type', 'application/json')
+            xhr.withCredentials = false
+
+            const user = document.getElementById("user").value
+            const password = document.getElementById("password").value
+            const cmd = document.getElementById("cmd").value
+            const scheduled = document.getElementById("scheduled").value
+
+            xhr.setRequestHeader('User', user)
+            xhr.setRequestHeader('Password', password)
+            xhr.setRequestHeader('Cmd', cmd)
+            xhr.setRequestHeader('Scheduled', scheduled)
+
+            xhr.send()
+          })
+        }
+
+        document.getElementById("submit").onclick = function (e) {
+          e.preventDefault()
+
+          XHR("https://localhost/api/create").then(
+              function (success) {
+                const r = document.getElementById("result")
+                const n = document.createTextNode(success)
+                console.log(success)
+                r.appendChild(n)
+                const br = document.createElement("br")
+                r.appendChild(br)
+              },
+              function (failure) {
+                const r = document.getElementById("result")
+                const n = document.createTextNode(failure)
+                console.log(failure)
+                r.appendChild(n)
+                const br = document.createElement("br")
+                r.appendChild(br)
+              }
+          )
+        }
+      }
+    </script>
   </body>
 </html>
