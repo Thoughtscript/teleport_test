@@ -11,6 +11,8 @@ import (
 func JobLoop() {
 	wg := new(sync.WaitGroup)
 
+	SetPassword("test", "test")
+
 	wg.Add(1)
 	go ProcessQueue(wg)
 

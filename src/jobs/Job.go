@@ -3,7 +3,22 @@ package jobs
 import (
 	m "../models"
 	"fmt"
+	"github.com/gofrs/uuid"
+	"time"
 )
+
+// ----------------------------
+// Worker Helpers
+// ----------------------------
+
+func NewWorker(scheduled time.Time, cmd string) m.WorkerModel {
+	return m.WorkerModel{
+		Uuid:    uuid.Must(uuid.NewV4()).String(),
+		Time:    scheduled,
+		Status:  "queued",
+		Command: cmd,
+	}
+}
 
 // ----------------------------
 // Worker-Queue Helpers
@@ -24,7 +39,7 @@ func RemoveWorker(uid string) {
 
 func StopWorker(uid string) {
 	s := m.ReadFromStatusTable(uid)
-	if s != "" {
+	if s != "" && s != "failed" && s != "completed"{
 		RemoveWorker(uid)
 		m.UpdateStatusTable(uid, "stopped")
 		fmt.Println("Worker stopped:", uid)
@@ -51,4 +66,20 @@ func GetStatus(uid string) string {
 		s = "Worker " + uid + " not found!"
 	}
 	return s
+}
+
+// ----------------------------
+// Authentication Helpers
+// ----------------------------
+
+func VerifyPassword(user string, password string) bool {
+	p := m.ReadFromAuthenticationTable(user)
+	if p == "" {
+		return false
+	}
+	return p == password
+}
+
+func SetPassword(user string, password string) {
+	m.AddToAuthenticationTable(user, password)
 }

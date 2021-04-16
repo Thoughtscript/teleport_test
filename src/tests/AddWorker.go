@@ -4,7 +4,6 @@ import (
 	j "../jobs"
 	m "../models"
 	"fmt"
-	"github.com/gofrs/uuid"
 	"sync"
 	"time"
 )
@@ -40,17 +39,9 @@ func TestExecuteWorkerLoop(wg *sync.WaitGroup) {
 func AddWorkerAndStop(wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	uid := uuid.Must(uuid.NewV4()).String()
-	fmt.Println("Adding worker:", uid)
-
-	worker := m.WorkerModel{
-		Uuid:    uid,
-		Time:    time.Now(),
-		Status:  "queued",
-		Command: "ls",
-	}
-
+	worker := j.NewWorker(time.Now(), "ls")
 	j.AddWorker(worker)
+	uid := worker.Uuid
 
 	fmt.Println(m.StatusTable()[uid])
 	fmt.Println(m.WorkerTable()[uid])
@@ -62,17 +53,9 @@ func AddWorkerAndStop(wg *sync.WaitGroup) {
 func AddWorkerAndExecuteWg(wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	uid := uuid.Must(uuid.NewV4()).String()
-	fmt.Println("Adding worker:", uid)
-
-	worker := m.WorkerModel{
-		Uuid:    uid,
-		Time:    time.Now(),
-		Status:  "queued",
-		Command: "ls",
-	}
-
+	worker := j.NewWorker(time.Now(), "ls")
 	j.AddWorker(worker)
+	uid := worker.Uuid
 
 	fmt.Println(m.StatusTable()[uid])
 	fmt.Println(m.WorkerTable()[uid])
@@ -84,17 +67,9 @@ func AddWorkerAndExecuteWg(wg *sync.WaitGroup) {
 func AddWorkerAndPrintWg(wg *sync.WaitGroup) {
 	defer wg.Done()
 
-	uid := uuid.Must(uuid.NewV4()).String()
-	fmt.Println("Adding worker:", uid)
-
-	worker := m.WorkerModel{
-		Uuid:    uid,
-		Time:    time.Now(),
-		Status:  "queued",
-		Command: "ls",
-	}
-
+	worker := j.NewWorker(time.Now(), "ls")
 	j.AddWorker(worker)
+	uid := worker.Uuid
 
 	fmt.Println(m.StatusTable()[uid])
 	fmt.Println(m.WorkerTable()[uid])
@@ -106,17 +81,9 @@ func AddWorkerAndPrintWg(wg *sync.WaitGroup) {
 // ----------------------------
 
 func addWorkerAndExecute() {
-	uid := uuid.Must(uuid.NewV4()).String()
-	fmt.Println("Adding worker:", uid)
-
-	worker := m.WorkerModel{
-		Uuid:    uid,
-		Time:    time.Now(),
-		Status:  "queued",
-		Command: "ls",
-	}
-
+	worker := j.NewWorker(time.Now(), "ls")
 	j.AddWorker(worker)
+	uid := worker.Uuid
 
 	fmt.Println(m.StatusTable()[uid])
 	fmt.Println(m.WorkerTable()[uid])
@@ -126,17 +93,9 @@ func addWorkerAndExecute() {
 }
 
 func addWorkerAndPrint() {
-	uid := uuid.Must(uuid.NewV4()).String()
-	fmt.Println("Adding worker:", uid)
-
-	worker := m.WorkerModel{
-		Uuid:    uid,
-		Time:    time.Now(),
-		Status:  "queued",
-		Command: "ls",
-	}
-
+	worker := j.NewWorker(time.Now(), "ls")
 	j.AddWorker(worker)
+	uid := worker.Uuid
 
 	fmt.Println(m.StatusTable()[uid])
 	fmt.Println(m.WorkerTable()[uid])
