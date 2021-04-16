@@ -2,7 +2,7 @@ package main
 
 import (
 	h "./handlers"
-	j "./jobs"
+	t "./tests"
 	"log"
 	"net/http"
 )
@@ -19,8 +19,8 @@ func main() {
 	http.HandleFunc("/api/pool", h.QueryPool)
 	http.HandleFunc("/api/stop", h.StopJob)
 
-	go j.JobLoop()
-	//go t.TestLoop()
+	//go j.JobLoop()
+	go t.TestLoop()
 
 	// TLS
 	port := ":443"

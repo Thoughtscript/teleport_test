@@ -49,3 +49,84 @@ Adding and stopping operations involve modifying several tables and have been ab
 
 ## TLS API
 
+The API uses the most basic authentication and supplies endpoints to query the **Worker Status** table, **Workers**, stop **Workers**, and submit **Workers** to the **Worker Queue**.
+
+The default authentication settings are: `user`: `test` and `password`: `test`.
+
+### Endpoints
+
+1. GET - https://localhost/public/
+
+   Brings up a simple HTML client.
+
+1. POST - https://localhost/api/create
+
+   With headers:
+
+    1. `cmd` - `string` - bash command - this will be converted to `ls` so anything you pass in here is fine to send.
+    1. `scheduled` - `string` - valid go `time.RFC3339` [parsable string](https://golang.org/pkg/time/#example_Parse): `"2006-01-02T15:04:05Z"`
+    1. `Content-Type` - `application/json`
+    1. `user` - `string`
+    1. `password` - `string`
+
+1. GET - https://localhost/api/pool
+
+   Response:
+    ```
+    {
+        "10a8952b-d730-447c-b1d8-b15614944246": "queued",
+        "15fa758d-9c8e-4eef-877a-e332675e55fe": "completed",
+        "2866b264-513f-4a68-88d2-d8ee4f294f7f": "completed",
+        "4e7b801c-4fd6-4b4d-87dc-c1ce1481d4af": "completed",
+        "59c904ca-bbbc-4d1b-8831-ce86725d440e": "completed",
+        "86480c6d-2134-4aca-82e4-7854e3041ab1": "completed",
+        "b3e8cc19-4a3c-4c83-8b11-26698d1db2a8": "executing",
+        "cbaf1e15-ec3a-4182-b122-b7e235b103c0": "completed",
+        "dff12a72-932b-44eb-80d3-acf4c29b2aeb": "completed"
+    }
+    ```
+
+1. GET - https://localhost/api/jobs
+
+   With headers:
+
+    1. `Content-Type` - `application/json`
+    1. `uuid` - `string` - uuid of Worker
+    1. `user` - `string`
+    1. `password` - `string`
+
+   Response:
+    ```
+    {
+        "Uuid": "2f99ae7c-992c-42bd-9df3-293101086d08",
+        "Time": "2021-01-02T15:04:05Z",
+        "Status": "queued",
+        "Command": "ls",
+        "Output": ""
+    }
+    ```
+
+1. POST - https://localhost/api/stop
+
+   With headers:
+
+    1. `Content-Type` - `application/json`
+    1. `uuid` - `string` - uuid of Worker
+    1. `user` - `string`
+    1. `password` - `string`
+
+   Response:
+   
+    ```
+    "stopped"
+    ```
+
+   This API will return `completed`, `failed`, or `stopped`.
+
+### Limitations
+
+1. No rate limiting.
+1. Only the very-most basic authentication.
+1. No timeout logic for stale connections.
+1. Only self-signed TLS encryption - no additional encryption of plaintext passwords.
+1. No client-side or server-side verification of user-submitted bash. (This is hard-coded to `ls` so no malicious attacks could be here. See comments above.)

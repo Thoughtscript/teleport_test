@@ -61,6 +61,8 @@ Navigate to [src](./src):
 
 ### API
 
+The default authentication settings are: `user`: `test` and `password`: `test`.
+
 1. GET - https://localhost/public/
 
    Brings up a simple HTML client.
@@ -72,6 +74,8 @@ Navigate to [src](./src):
     1. `cmd` - `string` - bash command - this will be converted to `ls` so anything you pass in here is fine to send.
     1. `scheduled` - `string` - valid go `time.RFC3339` [parsable string](https://golang.org/pkg/time/#example_Parse): `"2006-01-02T15:04:05Z"`
     1. `Content-Type` - `application/json`
+    1. `user` - `string`
+    1. `password` - `string`
 
 1. GET - https://localhost/api/pool
 
@@ -96,6 +100,8 @@ Navigate to [src](./src):
 
     1. `Content-Type` - `application/json`
     1. `uuid` - `string` - uuid of Worker
+    1. `user` - `string`
+    1. `password` - `string`
 
     Response:
     ```
@@ -113,12 +119,17 @@ Navigate to [src](./src):
    With headers:
 
    1. `Content-Type` - `application/json`
-   1. `uuid` - `string` - uuid of Worker
+   1. `uuid` - `string` - uuid of Worker 
+   1. `user` - `string`
+   1. `password` - `string`
+
 
    Response:
     ```
     "stopped"
     ```
+
+   This API will return `completed`, `failed`, or `stopped`.
 
 ### Examples
 
