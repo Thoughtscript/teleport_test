@@ -31,7 +31,7 @@ func CreateJob(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
 			}
 		} else {
-			w.WriteHeader(http.StatusForbidden)
+			w.WriteHeader(http.StatusUnauthorized)
 		}
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -52,7 +52,7 @@ func QueryPool(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
 			}
 		} else {
-			w.WriteHeader(http.StatusForbidden)
+			w.WriteHeader(http.StatusUnauthorized)
 		}
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -74,7 +74,7 @@ func QueryJob(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
 			}
 		} else {
-			w.WriteHeader(http.StatusForbidden)
+			w.WriteHeader(http.StatusUnauthorized)
 		}
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -90,14 +90,14 @@ func StopJob(w http.ResponseWriter, r *http.Request) {
 
 		if j.VerifyPassword(user, password) {
 			uid := r.Header.Get("uuid")
-			w.WriteHeader(http.StatusOK)
+			w.WriteHeader(http.StatusCreated)
 			j.StopWorker(uid)
 			err := json.NewEncoder(w).Encode(j.GetStatus(uid))
 			if err != nil {
 				w.WriteHeader(http.StatusBadRequest)
 			}
 		} else {
-			w.WriteHeader(http.StatusForbidden)
+			w.WriteHeader(http.StatusUnauthorized)
 		}
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -119,7 +119,7 @@ func QueryStatus(w http.ResponseWriter, r *http.Request) {
 				w.WriteHeader(http.StatusBadRequest)
 			}
 		} else {
-			w.WriteHeader(http.StatusForbidden)
+			w.WriteHeader(http.StatusUnauthorized)
 		}
 	} else {
 		w.WriteHeader(http.StatusMethodNotAllowed)

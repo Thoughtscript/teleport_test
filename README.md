@@ -52,6 +52,8 @@ Navigate to [src](./src):
 
 > The API uses a self-signed TLS certificate generated through OpenSSL.
 
+> Successful POST requests will return status code `201` and successful GET requests will return status code `200`.
+
 1. GET - https://localhost/public/
 
    Brings up a simple HTML client.

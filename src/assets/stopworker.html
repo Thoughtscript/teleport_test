@@ -54,7 +54,7 @@
 
             xhr.onreadystatechange = function () {
               if (xhr.readyState === 4) {
-                if (xhr.status === 200) return resolve(xhr.response)
+                if (xhr.status === 201) return resolve(xhr.response)
                 else return reject("Request failed - please try again!")
               }
             }

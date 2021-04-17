@@ -32,7 +32,7 @@ func AddToAuthenticationTable(user string, password string) {
 }
 
 func ReadFromAuthenticationTable(user string) string {
-	stLock.Lock()
-	defer stLock.Unlock()
+	aLock.Lock()
+	defer aLock.Unlock()
 	return authenticationTable[user]
 }

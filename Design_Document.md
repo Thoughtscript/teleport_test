@@ -79,6 +79,8 @@ The API uses the most basic authentication and supplies endpoints to query the *
 
 > The API uses a self-signed TLS certificate generated through OpenSSL.
 
+> Successful POST requests will return status code `201` and successful GET requests will return status code `200`.
+
 ### Endpoints
 
 1. GET - https://localhost/public/
